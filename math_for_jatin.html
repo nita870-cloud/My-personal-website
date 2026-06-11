@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jatin's Math Adventure! 🎈</title>
+    <!-- Animate.css for fun, kid-friendly animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        /* --- Playful Bubbly Font & Gradient Background --- */
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+            background: linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            color: #333;
+        }
+
+        /* --- Main Game Card --- */
+        #game-card {
+            background: white;
+            padding: 25px 40px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+            width: 90%;
+            max-width: 520px;
+            text-align: center;
+            border: 5px solid #FFF;
+            position: relative;
+        }
+
+        h1 {
+            color: #FF1493; /* Deep Pink */
+            font-size: 2.2em;
+            margin-top: 0;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        /* --- Level Badge --- */
+        #level-badge {
+            display: inline-block;
+            background-color: #007BFF;
+            color: white;
+            font-size: 1.1em;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.5s ease;
+        }
+
+        /* --- Top Row with Score, Answered count, and Timer --- */
+        #top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap; /* Ensure it fits nicely on smaller screens */
+        }
+
+        .tracker-box {
+            font-size: 1.1em;
+            padding: 10px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            flex: 1;
+            min-width: 100px;
+            border: 2px dashed;
+        }
+
+        #score-board {
+            color: #FFA500; /* Orange */
+            background: #FFF9E6;
+            border-color: #FFA500;
+        }
+
+        #answered-board {
+            color: #007BFF; /* Blue */
+            background: #E8F4FF;
+            border-color: #007BFF;
+        }
+        
+        #timer-display {
+            color: #38ef7d; /* Green */
+            background: #E6FFF3;
+            border-color: #38ef7d;
+            transition: all 0.3s ease;
+        }
+        
+        #timer-display.warning {
+            color: #FF4B2B;
+            background: #FFEBE8;
+            border-color: #FF4B2B;
+            transform: scale(1.1);
+        }
+
+        /* --- Big Math Equation Area --- */
+        #equation-display {
+            font-size: 3.5em;
+            font-weight: bold;
+            color: #4A00E0; /* Purple */
+            margin: 15px 0;
+            background: #F3F0FF;
+            padding: 20px;
+            border-radius: 20px;
+            border: 3px solid #7F00FF;
+        }
+
+        /* --- Input & Submit Section --- */
+        #input-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        #answer-input {
+            width: 120px;
+            height: 70px;
+            font-size: 3em;
+            text-align: center;
+            border: 4px solid #FF8C00; /* Dark Orange */
+            border-radius: 20px;
+            color: #FF8C00;
+            outline: none;
+            background: #FFFDF9;
+        }
+
+        #answer-input:focus {
+            box-shadow: 0 0 15px rgba(255, 140, 0, 0.4);
+        }
+
+        /* --- Colorful Buttons --- */
+        .btn {
+            font-family: inherit;
+            font-weight: bold;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 0px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0px rgba(0,0,0,0.1);
+        }
+
+        #submit-btn {
+            background: linear-gradient(to bottom, #11998e, #38ef7d); /* Fresh Green */
+            color: white;
+            padding: 15px 35px;
+            font-size: 1.5em;
+        }
+
+        #skip-btn {
+            background: linear-gradient(to bottom, #FF4B2B, #FF416C); /* Coral Red */
+            color: white;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+
+        /* --- Smart Feedback System --- */
+        #hint-box {
+            font-size: 1.2em;
+            color: #2F4F4F;
+            min-height: 40px;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        /* --- Full Screen Celebration Overlay --- */
+        #celebration-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #celebration-card {
+            background: radial-gradient(circle, #FFE259, #FFA751);
+            padding: 50px;
+            border-radius: 30px;
+            text-align: center;
+            color: white;
+            border: 6px solid #FFF;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            position: relative;
+            max-width: 400px;
+            width: 80%;
+        }
+
+        #celebration-title {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        #celebration-subtitle {
+            font-size: 1.5em;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        #close-btn {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 2em;
+            color: white;
+            cursor: pointer;
+            text-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+
+        #close-btn:hover {
+            transform: scale(1.2);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Game Board -->
+    <div id="game-card">
+        <h1>Jatin's Math Adventure! 🎈</h1>
+        
+        <!-- Live Badge Evaluator -->
+        <div id="level-badge">🎈 Level 1: Math Starter</div>
+        
+        <div id="top-row">
+            <div id="score-board" class="tracker-box">⭐ Stars: <span id="star-count">0</span></div>
+            <div id="answered-board" class="tracker-box">📝 Answered: <span id="answered-count">0</span></div>
+            <div id="timer-display" class="tracker-box">⏳ Time: <span id="time-left">100</span>s</div>
+        </div>
+
+        <div id="equation-display">? + ? = ?</div>
+
+        <div id="input-row">
+            <input type="number" id="answer-input" placeholder="?" autocomplete="off">
+            <button id="submit-btn" class="btn">GO!</button>
+        </div>
+
+        <div id="hint-box">Let's solve the puzzle, Jatin!</div>
+
+        <button id="skip-btn" class="btn">New Question 🔄</button>
+    </div>
+
+    <!-- Celebration Popup -->
+    <div id="celebration-overlay" class="hidden">
+        <div id="celebration-card" class="animate__animated">
+            <span id="close-btn">&times;</span>
+            <div id="celebration-title">🎉 AMAZING! 🎉</div>
+            <div id="celebration-subtitle">You got it right, Jatin! You earned a star! 🌟</div>
+        </div>
+    </div>
+
+    <script>
+        // DOM References
+        const equationDisplay = document.getElementById('equation-display');
+        const answerInput = document.getElementById('answer-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const skipBtn = document.getElementById('skip-btn');
+        const hintBox = document.getElementById('hint-box');
+        const celebrationOverlay = document.getElementById('celebration-overlay');
+        const celebrationCard = document.getElementById('celebration-card');
+        const closeBtn = document.getElementById('close-btn');
+        const starCountDisplay = document.getElementById('star-count');
+        const answeredCountDisplay = document.getElementById('answered-count');
+        const levelBadge = document.getElementById('level-badge');
+        const timerDisplay = document.getElementById('timer-display');
+        const timeLeftDisplay = document.getElementById('time-left');
+
+        // State variables
+        let num1 = 0, num2 = 0, correctAnswer = 0, operator = "+";
+        let stars = 0;
+        let totalAnswered = 0; // Evaluates total attempted questions
+        let autoNextTimer = null, questionTimerId = null;
+
+        // --- Live Level Evaluation Engine ---
+        function evaluateLevel() {
+            let levelText = "🎈 Level 1: Math Starter";
+            let badgeColor = "#007BFF"; // Blue
+
+            if (totalAnswered >= 15) {
+                levelText = "👑 Level 4: Super Champion!";
+                badgeColor = "#FFD700"; // Gold
+                levelBadge.style.color = "#333"; // Dark text for gold
+            } else if (totalAnswered >= 10) {
+                levelText = "⚡ Level 3: Math Wizard";
+                badgeColor = "#9400D3"; // Dark Violet
+                levelBadge.style.color = "#fff";
+            } else if (totalAnswered >= 5) {
+                levelText = "🚀 Level 2: Math Explorer";
+                badgeColor = "#FF4500"; // Orange-Red
+                levelBadge.style.color = "#fff";
+            }
+
+            levelBadge.textContent = levelText;
+            levelBadge.style.backgroundColor = badgeColor;
+        }
+
+        // --- Timer Logic (100 Seconds) ---
+        function startTimer() {
+            clearInterval(questionTimerId); // Clear any old timer
+            let timeLeft = 100; // Updated to 100 seconds
+            timeLeftDisplay.textContent = timeLeft;
+            timerDisplay.classList.remove('warning');
+
+            questionTimerId = setInterval(() => {
+                timeLeft--;
+                timeLeftDisplay.textContent = timeLeft;
+
+                // Alerts Jatin at 15 seconds left
+                if (timeLeft <= 15) {
+                    timerDisplay.classList.add('warning');
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(questionTimerId);
+                    hintBox.textContent = "Time's up! ⏰ Let's try the next one.";
+                    hintBox.style.color = "#FF4500";
+                    setTimeout(generateQuestion, 2000); // Wait 2s, then generate next
+                }
+            }, 1000);
+        }
+
+        // Generate Addition or Subtraction equations
+        function generateQuestion() {
+            const isAddition = Math.random() > 0.5;
+
+            if (isAddition) {
+                num1 = Math.floor(Math.random() * 10) + 1;
+                num2 = Math.floor(Math.random() * 10) + 1;
+                correctAnswer = num1 + num2;
+                operator = "+";
+            } else {
+                num1 = Math.floor(Math.random() * 10) + 4;
+                num2 = Math.floor(Math.random() * num1) + 1;
+                correctAnswer = num1 - num2;
+                operator = "-";
+            }
+
+            equationDisplay.textContent = `${num1} ${operator} ${num2} = ?`;
+            answerInput.value = '';
+            hintBox.textContent = "You can do it, Jatin! Type your answer.";
+            hintBox.style.color = "#2F4F4F";
+            answerInput.focus();
+            startTimer(); // Start 100-second countdown
+        }
+
+        // Display celebration and increase star count
+        function celebrateCorrectAnswer() {
+            clearInterval(questionTimerId); // Stop the timer
+            stars++;
+            starCountDisplay.textContent = stars;
+
+            celebrationOverlay.classList.remove('hidden');
+            celebrationCard.className = "animate__animated animate__tada";
+
+            autoNextTimer = setTimeout(closePopupAndContinue, 4000);
+        }
+
+        // Close celebration popup and immediately start next round
+        function closePopupAndContinue() {
+            clearTimeout(autoNextTimer);
+            celebrationOverlay.classList.add('hidden');
+            generateQuestion();
+        }
+
+        // Check user inputs & Evaluate progress
+        function checkAnswer() {
+            const jatinAnswer = parseInt(answerInput.value);
+
+            if (isNaN(jatinAnswer)) {
+                hintBox.textContent = "Oops! Try typing a number first, Jatin! 😊";
+                hintBox.style.color = "#FF4500";
+                return;
+            }
+
+            // Valid answer submitted! Increment evaluation metrics
+            totalAnswered++;
+            answeredCountDisplay.textContent = totalAnswered;
+            evaluateLevel(); // Upgrade Level Badge if applicable
+
+            clearInterval(questionTimerId); // Stop the timer on submit
+
+            if (jatinAnswer === correctAnswer) {
+                celebrateCorrectAnswer();
+            } else {
+                let guideMessage = (operator === "+")
+                    ? `Almost, Jatin! Start with ${num1} in your head, and count up ${num2} times! 🧠`
+                    : `So close, Jatin! Imagine you have ${num1} apples, and you eat ${num2} of them. How many are left? 🍎`;
+                hintBox.textContent = guideMessage;
+                hintBox.style.color = "#4A00E0";
+            }
+        }
+
+        // Event Listeners
+        submitBtn.addEventListener('click', checkAnswer);
+        skipBtn.addEventListener('click', generateQuestion);
+        closeBtn.addEventListener('click', closePopupAndContinue);
+
+        answerInput.addEventListener('keyup', e => { if (e.key === 'Enter') checkAnswer(); });
+
+        window.onload = generateQuestion;
+    </script>
+</body>
+</html>
